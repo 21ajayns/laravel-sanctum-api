@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\taskcrudapp;
+use App\Http\controllers\TCAcontroller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -17,21 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/tca', function() {          
-    return taskcrudapp::all();
-});
-
+Route::resource('/tca', TCAcontroller::class); 
 //tca for task-crud-app..!//
+//Route::get('/tca', [TCAcontroller::class, 'index']);
+//Route::post('/tca', [TCAcontroller::class, 'store']);
 
-Route::post('/tca', function() {
-    return taskcrudapp::create([
-        'name' => 'Task one',
-        'description' => 'First task is given',
-        'status' => 'Open'
-    ]);
-});
 
-//Route::resource('products', ProductController::class);
+
+
 
 //Public Routes
 Route::post('/register', [AuthController::class, 'register']);

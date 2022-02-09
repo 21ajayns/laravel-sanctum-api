@@ -17,16 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('/tca', TCAcontroller::class); 
+
 //tca for task-crud-app..!//
-//Route::get('/tca', [TCAcontroller::class, 'index']);
-//Route::post('/tca', [TCAcontroller::class, 'store']);
-
-
-
-
 
 //Public Routes
+Route::get('/tca', [TCAcontroller::class, 'index']);
+Route::get('/tca/{id}', [TCAcontroller::class, 'show']);
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products', [ProductController::class, 'index']);
@@ -35,6 +32,10 @@ Route::get('/products/search/{name}', [ProductController::class, 'search']);
 
 //Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/tca', [TCAcontroller::class, 'store']);
+    Route::put('/tca/{id}', [TCAcontroller::class, 'update']);
+    Route::delete('/tca/{id}', [TCAcontroller::class, 'destroy']);
+
     Route::post('/products', [productController::class, 'store']);
     Route::put('/products/{id}', [productController::class, 'update']);
     Route::delete('/products/{id}', [productController::class, 'destroy']);

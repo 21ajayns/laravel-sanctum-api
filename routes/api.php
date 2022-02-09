@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\taskcrudapp;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -15,6 +16,20 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/tca', function() {          
+    return taskcrudapp::all();
+});
+
+//tca for task-crud-app..!//
+
+Route::post('/tca', function() {
+    return taskcrudapp::create([
+        'name' => 'Task one',
+        'description' => 'First task is given',
+        'status' => 'Open'
+    ]);
+});
 
 //Route::resource('products', ProductController::class);
 

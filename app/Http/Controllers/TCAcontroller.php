@@ -53,7 +53,9 @@ class TCAcontroller extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $taskcrudapp = taskcrudapp::find($id);
+        $taskcrudapp->update($request->all());
+        return $taskcrudapp;
     }
 
     /**
@@ -64,6 +66,6 @@ class TCAcontroller extends Controller
      */
     public function destroy($id)
     {
-        //
+        return taskcrudapp::destroy($id);
     }
 }

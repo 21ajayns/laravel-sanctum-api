@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\controllers\TCAcontroller;
+use App\Http\controllers\TaskController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -18,12 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-//tca for task-crud-app..!//
-//Authcontroller used for tca// 
 
 //Public Routes
-Route::get('/tca', [TCAcontroller::class, 'index']);
-Route::get('/tca/{id}', [TCAcontroller::class, 'show']);
+Route::get('/task', [TaskController::class, 'index']);
+Route::get('/task/{id}', [TaskController::class, 'show']);
+Route::get('/task/search/{name}', [TaskController::class, 'search']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -33,9 +32,9 @@ Route::get('/products/search/{name}', [ProductController::class, 'search']);
 
 //Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/tca', [TCAcontroller::class, 'store']);
-    Route::put('/tca/{id}', [TCAcontroller::class, 'update']);
-    Route::delete('/tca/{id}', [TCAcontroller::class, 'destroy']);
+    Route::post('/task', [Taskcontroller::class, 'store']);
+    Route::put('/task/{id}', [Taskcontroller::class, 'update']);
+    Route::delete('/task/{id}', [Taskcontroller::class, 'destroy']);
 
     Route::post('/products', [productController::class, 'store']);
     Route::put('/products/{id}', [productController::class, 'update']);

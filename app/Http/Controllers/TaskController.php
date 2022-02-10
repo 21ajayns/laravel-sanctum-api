@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\taskcrudapp;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
-class TCAcontroller extends Controller
+class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class TCAcontroller extends Controller
      */
     public function index()
     {
-        return taskcrudapp::all();
+        return Task::all();
     }
 
     /**
@@ -30,7 +30,7 @@ class TCAcontroller extends Controller
             'description' => 'required',
             'status' => 'required'
         ]);
-        return taskcrudapp::create($request->all());
+        return Task::create($request->all());
     }
 
     /**
@@ -41,7 +41,7 @@ class TCAcontroller extends Controller
      */
     public function show($id)
     {
-        return taskcrudapp::find($id);
+        return Task::find($id);
     }
 
     /**
@@ -53,9 +53,9 @@ class TCAcontroller extends Controller
      */
     public function update(Request $request, $id)
     {
-        $taskcrudapp = taskcrudapp::find($id);
-        $taskcrudapp->update($request->all());
-        return $taskcrudapp;
+        $task = Task::find($id);
+        $task->update($request->all());
+        return $task;
     }
 
     /**
@@ -66,6 +66,17 @@ class TCAcontroller extends Controller
      */
     public function destroy($id)
     {
-        return taskcrudapp::destroy($id);
+        return Task::destroy($id);
+    }
+    
+    /**
+     * Search for a name
+     *
+     * @param  str  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function search($name)
+    {
+        return Task::where('name', 'like', '%'.$name.'%')->get();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\controllers\TaskController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;

@@ -4,13 +4,9 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\URL;
-use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
-use phpDocumentor\Reflection\Types\This;
+use Tests\TestCase;
 
 class TaskControllerTest extends TestCase
 {
@@ -18,7 +14,7 @@ class TaskControllerTest extends TestCase
 
     public const URI = 'api/task';
 
-    public function test_Index_is_succesful(): void
+    public function test_index_is_succesful(): void
     {
         $this->withoutExceptionHandling();
         $task = new Task();

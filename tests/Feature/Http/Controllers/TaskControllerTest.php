@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\URL;
@@ -15,10 +16,11 @@ class TaskControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const URI = 'api/task';
+    public const URI = 'api/task';
 
     public function test_Index_is_succesful(): void
     {
+        $this->withoutExceptionHandling();
         $task = new Task();
         $task->setAttribute('name', 'task1');
         $task->setAttribute('description', 'task-1');
@@ -133,25 +135,8 @@ class TaskControllerTest extends TestCase
 
         $response = $this->json('DELETE', $uri);
         $response->assertStatus(200);
+        $this->assertDatabaseMissing('tasks', [
+            'id' => $task->getAttribute('id')
+        ]);
     }
-
-    // public function test_login_is_succesful(): void
-    // {
-    //     $this->withExceptionHandling();
-
-    //     $response = $this->json('POST', 'api/register', [
-    //         'name' => 'test_name3',
-    //         'email' => 'test3@gmail.com',
-    //         'password' => '12345',
-    //         'password_confirmation' => '12345'
-    //     ]);
-    //     $response->assertStatus(201);
-
-    //     $log = $this->json('POST', 'api/login', [
-    //         'name' => 'test_name3',
-    //         'email' => 'test3@gmail.com',
-    //         'password' => '12345'
-    //     ]);
-    //     $log->assertStatus(201);
-    // }
 }

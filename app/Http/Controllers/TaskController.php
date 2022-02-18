@@ -5,21 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskCreateRequest;
 use App\Models\Task;
 use App\Respositories\Interfaces\TaskRespositoryInterface;
+use App\Respositories\TaskRespository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
-    public function __construct(TaskRespositoryInterface $taskRespository)
+    private TaskRespositoryInterface $taskRepository;
+    public function __construct(TaskRespositoryInterface $taskRepository)
     {
-        $this->taskrepository = $taskRespository;
+        $this->taskRepository = $taskRepository;
     }
     /**
      * Display a listing of the resource
      */
     public function index(): Response
     {
-        $tasks = $this->taskRespository->getAllTasks();
+        $tasks = $this->taskRepository->getAllTasks();
         return new Response($tasks);
     }
 
@@ -31,7 +33,7 @@ class TaskController extends Controller
      */
     public function store(TaskCreateRequest $request): Response
     {
-        $tasks = $this->taskRespository->createTask($request->all());
+        $tasks = $this->taskRepository->createTask($request->all());
         return new Response($tasks->toArray(), 201);
     }
 
@@ -43,7 +45,7 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $tasks = $this->taskRespository->show($id);
+        $tasks = $this->taskRepository->show($id);
         return new Response($tasks);
     }
 
@@ -56,7 +58,7 @@ class TaskController extends Controller
      */
     public function update(TaskCreateRequest $request, $id): Response
     {
-        $tasks = $this->taskRespository->update($request->all(), $id);
+        $tasks = $this->taskRepository->update($request->all(), $id);
         return new Response($tasks->toArray(), 201);
     }
 
@@ -68,7 +70,7 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        $tasks = $this->taskRespository->destroy($id);
+        $tasks = $this->taskRepository->destroy($id);
     }
     
     /**
@@ -79,7 +81,7 @@ class TaskController extends Controller
      */
     public function search($name): Response
     {
-        $tasks = $this->taskrespository->search($name);
+        $tasks = $this->taskrepository->search($name);
         return new Response($tasks);
     }
 }

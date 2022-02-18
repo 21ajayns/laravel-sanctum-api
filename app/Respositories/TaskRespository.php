@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 
 class TaskRespository implements TaskRespositoryInterface
 {
+
     public function getAllTasks(): Collection
     {
         return Task::all();

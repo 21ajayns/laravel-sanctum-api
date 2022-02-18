@@ -1,16 +1,15 @@
 <?php
 
-namespace Tests\Feature\Http\Controllers;
+namespace tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use GuzzleHttp\Psr7\Uri;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
-use phpDocumentor\Reflection\Types\This;
+use App\Http\Requests\TaskCreateRequest;
+use phpDocumentor\Reflection\Types\Void_;
 
 class TaskControllerTest extends TestCase
 {
@@ -18,7 +17,7 @@ class TaskControllerTest extends TestCase
 
     public const URI = 'api/task';
 
-    public function test_Index_is_succesful(): void
+    public function test_index_is_succesful(): void
     {
         $this->withoutExceptionHandling();
         $task = new Task();
@@ -58,9 +57,38 @@ class TaskControllerTest extends TestCase
             'status' => 'on progress'
         ];
         $response->assertStatus(201)
-        ->assertJsonFragment($expected);
+             ->assertJsonFragment($expected);
         $this->assertDatabaseHas('tasks',$expected);
 
+    }
+
+    public function testCreateFailsIfRequiredParamAreMissing(): void
+    {
+        $user = new User();
+        $user -> setAttribute('name', 'new_name');
+        $user -> setAttribute('email', 'new@gmail.com');
+        $user -> setAttribute('password', '123455');
+        $user->save();
+        Sanctum::actingAs($user);
+
+        $expected = [
+            'message' => 'The given data was invalid.',
+            'errors' => [
+                'name' =>[
+                     'The name field is required.'
+              ],
+                'description' =>[
+                     'The description field is required.'
+              ],
+                'status' =>[
+                     'The status field is required.'
+              ],
+            ],
+        ];
+
+        $response = $this->json('POST', self::URI,[]);
+        $response->assertStatus(422)
+            ->assertjsonFragment($expected);
     }
 
     public function test_find_is_succesful(): void
@@ -81,7 +109,6 @@ class TaskControllerTest extends TestCase
 
     public function test_update_is_successful(): void
     {
-        $this->withExceptionHandling();
         $user = new User();
         $user -> setAttribute('name', 'test_name1');
         $user -> setAttribute('email', 'test1@gmail.com');
@@ -97,6 +124,8 @@ class TaskControllerTest extends TestCase
 
         $uri = \sprintf('%s/%s',self::URI,$task->getAttribute('id'));
         $response = $this->json('PUT', $uri, [
+            'name' => 'task1',
+            'description' => 'task-1',
             'status' => 'not on progress'
         ]);
         $expected = [
@@ -104,14 +133,51 @@ class TaskControllerTest extends TestCase
             'description' => 'task-1',
             'status' => 'not on progress'
         ];
-        $response->assertStatus(200)
-        ->assertJsonFragment($expected);
+        $response->assertStatus(201)
+             ->assertJsonFragment($expected);
         $this->assertDatabaseHas('tasks',$expected);
+    }
+
+    public function testUpdateFailsIfRequiredParamAreMissing(): void
+    {
+        $user = new User();
+        $user -> setAttribute('name', 'new_name');
+        $user -> setAttribute('email', 'new@gmail.com');
+        $user -> setAttribute('password', '123455');
+        $user->save();
+        Sanctum::actingAs($user);
+
+        $task = new Task();
+        $task->setAttribute('name', 'task1');
+        $task->setAttribute('description', 'task-1');
+        $task->setAttribute('status', 'completed');
+        $task->save();
+
+        $expected = [
+            'message' => 'The given data was invalid.',
+            'errors' => [
+                'name' =>[
+                    'The name field is required.'
+                ],
+                'description' =>[
+                    'The description field is required.'
+                ],
+                'status' =>[
+                    'The status field is required.'
+                ],
+            ],
+        ];
+
+        $uri = \sprintf('%s/%s',self::URI,$task->getAttribute('id'));
+
+        $response = $this->json('PUT',$uri,[]);
+        $response->assertStatus(422)
+            ->assertjsonFragment($expected);
     }
 
     public function test_destroy_is_succesful(): void
     {
-        $this->withExceptionHandling();
+        $this->withoutMiddleware();
         $user = new User();
         $user -> setAttribute('name', 'test_name2');
         $user -> setAttribute('email', 'test2@gmail.com');

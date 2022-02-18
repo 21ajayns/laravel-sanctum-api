@@ -12,6 +12,7 @@ use Illuminate\Http\Response;
 class TaskController extends Controller
 {
     private TaskRespositoryInterface $taskRepository;
+
     public function __construct(TaskRespositoryInterface $taskRepository)
     {
         $this->taskRepository = $taskRepository;
@@ -72,7 +73,7 @@ class TaskController extends Controller
     {
         $tasks = $this->taskRepository->destroy($id);
     }
-    
+
     /**
      * Search for a name
      *
@@ -81,7 +82,7 @@ class TaskController extends Controller
      */
     public function search($name): Response
     {
-        $tasks = $this->taskrepository->search($name);
+        $tasks = $this->taskRepository->search($name);
         return new Response($tasks);
     }
 }

@@ -64,6 +64,36 @@ class ProductControllerTest extends TestCase
         $this->assertDatabaseHas('products', $expected);
     }
 
+    public function testCreateFailsIfParamMissing(): void
+    {
+        $user = new User();
+        $user->setAttribute('name', 'testname');
+        $user->setAttribute('email', 'testname@gmail');
+        $user->setAttribute('password', 'test123');
+        $user->save();
+        Sanctum::actingAs($user);
+        
+        $response = $this->json('POST', self::URI, []);
+
+        $expected = [
+            'message' => 'The given data was invalid.',
+            'errors' => [
+                'name' =>[
+                     'The name field is required.'
+              ],
+                'slug' =>[
+                     'The slug field is required.'
+              ],
+                'price' =>[
+                     'The price field is required.'
+              ],
+            ],
+        ];
+
+        $response->assertStatus(422)
+             ->assertJsonFragment($expected);
+    }
+
     public function test_for_find(): void
     {
         $prod = new product();
@@ -89,14 +119,14 @@ class ProductControllerTest extends TestCase
         $user->save();
         Sanctum::actingAs($user);
 
-        $pro = new product();
-        $pro->setAttribute('name', 'phone2');
-        $pro->setAttribute('slug', 'phone-2');
-        $pro->setAttribute('name', 'the phone');
-        $pro->setAttribute('price', '50.00');
-        $pro->save();
+        $product = new product();
+        $product->setAttribute('name', 'phone2');
+        $product->setAttribute('slug', 'phone-2');
+        $product->setAttribute('name', 'the phone');
+        $product->setAttribute('price', '50.00');
+        $product->save();
 
-        $uri = \sprintf('%s/%s', self::URI, $pro->getAttribute('id'));
+        $uri = \sprintf('%s/%s', self::URI, $product->getAttribute('id'));
 
         $response = $this->json('PUT', $uri, [
             'name' => 'phone2',
@@ -111,9 +141,48 @@ class ProductControllerTest extends TestCase
             'description' => 'the actual phone',
             'price' => '50.01'
         ];
-        $response->assertStatus(200)
+        $response->assertStatus(201)
              ->assertJsonFragment($expected);
         $this->assertDatabaseHas('products', $expected);
+    }
+
+    public function testUpdateFailsIfParamMissing(): void
+    {
+        $user = new User();
+        $user->setAttribute('name', 'testname');
+        $user->setAttribute('email', 'testname@gmail');
+        $user->setAttribute('password', 'test123');
+        $user->save();
+        Sanctum::actingAs($user);
+
+        $product2 = new product();
+        $product2->setAttribute('name', 'phone2');
+        $product2->setAttribute('slug', 'phone-2');
+        $product2->setAttribute('name', 'the phone');
+        $product2->setAttribute('price', '50.00');
+        $product2->save();
+
+        $uri = \sprintf('%s/%s', self::URI, $product2->getAttribute('id'));
+
+        $response = $this->json('PUT',$uri,[]);
+
+        $expected = [
+            'message' => 'The given data was invalid.',
+            'errors' => [
+                'name' =>[
+                    'The name field is required.'
+                ],
+                'slug' =>[
+                    'The slug field is required.'
+                ],
+                'price' =>[
+                    'The price field is required.'
+                ],
+            ],
+        ];
+
+        $response->assertStatus(422)
+             ->assertJsonFragment($expected);
     }
 
     public function test_for_destroy(): void

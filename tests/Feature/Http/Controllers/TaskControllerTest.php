@@ -15,7 +15,7 @@ class TaskControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public const URI = 'api/task';
+    private const URI = 'api/task';
 
     public function test_index_is_succesful(): void
     {

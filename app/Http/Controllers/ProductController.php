@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCreateRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Repositories\Interfaces\ProductRepositoryInterface;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private ProductRepositoryInterface $productRepository;
+
+    public function __construct(ProductRepositoryInterface $productRepository)
     {
-        return Product::all();
+        $this->productRepository = $productRepository;
+    }
+    public function index(): Response
+    {
+        $product = $this->productRepository->getAllProduct();
+        return new Response($product);
     }
 
     /**
@@ -23,15 +29,10 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductCreateRequest $request): Response
     {
-        $request->validate([
-            'name' => 'required',
-            'slug' => 'required',
-            'price' => 'required'
-        ]);
-
-        return Product::create($request->all());
+        $product = $this->productRepository->create($request->all());
+        return new Response($product->toArray(), 201);
     }
 
     /**
@@ -40,9 +41,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): Response
     {
-        return Product::find($id);
+        $product = $this->productRepository->show($id);
+        return new Response($product);
     }
 
     /**
@@ -52,11 +54,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductUpdateRequest $request, $id): Response
     {
-        $product = product::find($id);
-        $product->update($request->all());
-        return $product;
+        $product = $this->productRepository->update($request->all(), $id);
+        return new Response($product->toArray(), 201);
     }
 
     /**
@@ -67,7 +68,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        return Product::destroy($id);
+        $product = $this->productRepository->destroy($id);
     }
 
     /**
@@ -76,8 +77,9 @@ class ProductController extends Controller
      * @param  str  $name
      * @return \Illuminate\Http\Response
      */
-    public function search($name)
+    public function search($name): Response
     {
-        return Product::where('name', 'like', '%'.$name.'%')->get();
+        $product = $this->productRepository->search($name);
+        return new Response($product);
     }
 }

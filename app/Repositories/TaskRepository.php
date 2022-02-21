@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Respositories;
+namespace App\Repositories;
 
 use App\Models\Task;
-use App\Respositories\Interfaces\TaskRespositoryInterface;
+use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Illuminate\Support\Collection;
 
-class TaskRespository implements TaskRespositoryInterface
+class TaskRepository implements TaskRepositoryInterface
 {
 
     public function getAllTasks(): Collection

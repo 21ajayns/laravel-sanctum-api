@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Respositories\Interfaces;
+namespace App\Repositories\Interfaces;
 
 use App\Models\Task;
 use illuminate\support\Collection;
 
-interface TaskRespositoryInterface
+interface TaskRepositoryInterface
 {
     public function getAllTasks(): Collection;
     
@@ -19,3 +19,4 @@ interface TaskRespositoryInterface
 
     public function search($name): Task;
 }
+?>

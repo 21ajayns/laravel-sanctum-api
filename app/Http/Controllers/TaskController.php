@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskCreateRequest;
+use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
-use App\Respositories\Interfaces\TaskRespositoryInterface;
-use App\Respositories\TaskRespository;
+use App\Repositories\Interfaces\TaskRepositoryInterface;
+use App\Repositories\TaskRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
-    private TaskRespositoryInterface $taskRepository;
+    private TaskRepositoryInterface $taskRepository;
 
-    public function __construct(TaskRespositoryInterface $taskRepository)
+    public function __construct(TaskRepositoryInterface $taskRepository)
     {
         $this->taskRepository = $taskRepository;
     }
@@ -57,7 +58,7 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(TaskCreateRequest $request, $id): Response
+    public function update(TaskUpdateRequest $request, $id): Response
     {
         $tasks = $this->taskRepository->update($request->all(), $id);
         return new Response($tasks->toArray(), 201);

@@ -15,7 +15,7 @@ class TaskControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public const URI = 'api/task';
+    private const URI = 'api/task';
 
     public function test_index_is_succesful(): void
     {
@@ -59,7 +59,6 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(201)
              ->assertJsonFragment($expected);
         $this->assertDatabaseHas('tasks',$expected);
-
     }
 
     public function testCreateFailsIfRequiredParamAreMissing(): void

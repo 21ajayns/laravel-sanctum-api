@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskCreateRequest;
+use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
+use App\Repositories\Interfaces\TaskRepositoryInterface;
+use App\Repositories\TaskRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private TaskRepositoryInterface $taskRepository;
+
+    public function __construct(TaskRepositoryInterface $taskRepository)
     {
-        return Task::all();
+        $this->taskRepository = $taskRepository;
+    }
+    /**
+     * Display a listing of the resource
+     */
+    public function index(): Response
+    {
+        $task = $this->taskRepository->getAllTasks();
+        return new Response($task);
     }
 
     /**
@@ -23,14 +33,10 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TaskCreateRequest $request): Response
     {
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-            'status' => 'required'
-        ]);
-        return Task::create($request->all());
+        $task = $this->taskRepository->createTask($request->all());
+        return new Response($task->toArray(), 201);
     }
 
     /**
@@ -41,7 +47,8 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        return Task::find($id);
+        $task = $this->taskRepository->show($id);
+        return new Response($task);
     }
 
     /**
@@ -51,11 +58,10 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TaskUpdateRequest $request, $id): Response
     {
-        $task = Task::find($id);
-        $task->update($request->all());
-        return $task;
+        $task = $this->taskRepository->update($request->all(), $id);
+        return new Response($task->toArray(), 201);
     }
 
     /**
@@ -66,17 +72,18 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        return Task::destroy($id);
+        $task = $this->taskRepository->destroy($id);
     }
-    
+
     /**
      * Search for a name
      *
      * @param  str  $name
      * @return \Illuminate\Http\Response
      */
-    public function search($name)
+    public function search($name): Response
     {
-        return Task::where('name', 'like', '%'.$name.'%')->get();
+        $task = $this->taskRepository->search($name);
+        return new Response($task);
     }
 }

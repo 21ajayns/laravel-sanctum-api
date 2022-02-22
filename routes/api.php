@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\controllers\TaskController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
@@ -32,9 +32,9 @@ Route::get('/products/search/{name}', [ProductController::class, 'search']);
 
 //Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/task', [Taskcontroller::class, 'store']);
-    Route::put('/task/{id}', [Taskcontroller::class, 'update']);
-    Route::delete('/task/{id}', [Taskcontroller::class, 'destroy']);
+    Route::post('/task', [TaskController::class, 'store']);
+    Route::put('/task/{id}', [TaskController::class, 'update']);
+    Route::delete('/task/{id}', [TaskController::class, 'destroy']);
 
     Route::post('/products', [productController::class, 'store']);
     Route::put('/products/{id}', [productController::class, 'update']);

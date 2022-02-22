@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 use App\Models\Product;
 use App\Http\Controllers\ProductController;
-use illuminate\support\Collection;
+use Illuminate\support\Collection;
 
 interface ProductRepositoryInterface
 {

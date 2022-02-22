@@ -23,8 +23,8 @@ class TaskController extends Controller
      */
     public function index(): Response
     {
-        $tasks = $this->taskRepository->getAllTasks();
-        return new Response($tasks);
+        $task = $this->taskRepository->getAllTasks();
+        return new Response($task);
     }
 
     /**
@@ -35,8 +35,8 @@ class TaskController extends Controller
      */
     public function store(TaskCreateRequest $request): Response
     {
-        $tasks = $this->taskRepository->createTask($request->all());
-        return new Response($tasks->toArray(), 201);
+        $task = $this->taskRepository->createTask($request->all());
+        return new Response($task->toArray(), 201);
     }
 
     /**
@@ -47,8 +47,8 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $tasks = $this->taskRepository->show($id);
-        return new Response($tasks);
+        $task = $this->taskRepository->show($id);
+        return new Response($task);
     }
 
     /**
@@ -60,8 +60,8 @@ class TaskController extends Controller
      */
     public function update(TaskUpdateRequest $request, $id): Response
     {
-        $tasks = $this->taskRepository->update($request->all(), $id);
-        return new Response($tasks->toArray(), 201);
+        $task = $this->taskRepository->update($request->all(), $id);
+        return new Response($task->toArray(), 201);
     }
 
     /**
@@ -72,7 +72,7 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        $tasks = $this->taskRepository->destroy($id);
+        $task = $this->taskRepository->destroy($id);
     }
 
     /**
@@ -83,7 +83,7 @@ class TaskController extends Controller
      */
     public function search($name): Response
     {
-        $tasks = $this->taskRepository->search($name);
-        return new Response($tasks);
+        $task = $this->taskRepository->search($name);
+        return new Response($task);
     }
 }

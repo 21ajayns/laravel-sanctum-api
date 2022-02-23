@@ -3,6 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Models\Task;
+use App\Http\Controllers\TaskController;
 use Illuminate\support\Collection;
 
 interface TaskRepositoryInterface

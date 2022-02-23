@@ -49,12 +49,20 @@ class TaskControllerTest extends TestCase
         $response = $this->json('POST', self::URI, [
             'name' => 'test task',
             'description' => 'this is a test task',
-            'status' => 'on progress'
+            'status' => 'on progress',
+            'comment' => [
+                'title' => 'title 1',
+                'body' => 'body'
+            ],
         ]);
         $expected = [
             'name' => 'test task',
             'description' => 'this is a test task',
-            'status' => 'on progress'
+            'status' => 'on progress',
+            'comment' => [
+                'title' => 'comment title',
+                'body' => 'comment body'
+            ],
         ];
         $response->assertStatus(201)
              ->assertJsonFragment($expected);

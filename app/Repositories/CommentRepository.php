@@ -14,9 +14,8 @@ class CommentRepository implements CommentRepositoryInterface
         $comment = new Comment();
         $comment->setAttribute('title', $data['title']);
         $comment->setAttribute('body', $data['body']);
-        $comment->save();
-
         $comment->task()->associate($task);
+        $comment->save();
 
         return $comment;
     }

@@ -42,7 +42,8 @@ class TaskController extends Controller
     {
         $task = $this->taskRepository->createTask($request->all());
         $comment = $request->get('comment');
-        $comment = $this->commentRepository->create($comment['title'], $comment['body'], $task);
+        
+        $comment = $this->commentRepository->create($comment, $task);
         $comment->task()->associate($task);
 
         return new Response($task->toArray(), 201);
@@ -50,7 +51,6 @@ class TaskController extends Controller
 
     /**
      * Display the specified resource.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

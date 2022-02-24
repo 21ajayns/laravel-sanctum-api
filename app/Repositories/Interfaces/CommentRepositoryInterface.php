@@ -8,5 +8,5 @@ use App\Models\Task;
 
 interface CommentRepositoryInterface
 {
-    public function create(array $data, Task $task): Comment;
+    public function create(array $comment, Task $task): Comment;
 }

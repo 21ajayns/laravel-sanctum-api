@@ -51,8 +51,8 @@ class TaskControllerTest extends TestCase
             'description' => 'this is a test task',
             'status' => 'on progress',
             'comment' => [
-                'title' => 'title 1',
-                'body' => 'body'
+                'title' => 'comment title',
+                'body' => 'comment body'
             ],
         ]);
         $expected = [
@@ -64,8 +64,9 @@ class TaskControllerTest extends TestCase
                 'body' => 'comment body'
             ],
         ];
+
         $response->assertStatus(201)
-             ->assertJsonFragment($expected);
+            ->assertJsonFragment($expected);
         $this->assertDatabaseHas('tasks',$expected);
     }
 

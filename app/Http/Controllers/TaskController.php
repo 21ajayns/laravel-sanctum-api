@@ -29,6 +29,7 @@ class TaskController extends Controller
     public function index(): Response
     {
         $task = $this->taskRepository->getAllTasks();
+        
         return new Response($task);
     }
 
@@ -43,9 +44,9 @@ class TaskController extends Controller
         $task = $this->taskRepository->createTask($request->all());
         $comment = $request->get('comment');
         
-        $comment = $this->commentRepository->create($comment, $task);
-        $comment->task()->associate($task);
-
+        if (\is_array($comment) === true && empty($comment) === false) {
+            $this->commentRepository->create($comment, $task);
+        }
         return new Response($task->toArray(), 201);
     }
 

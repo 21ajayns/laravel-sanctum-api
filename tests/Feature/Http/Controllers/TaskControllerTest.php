@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
 use App\Http\Requests\TaskCreateRequest;
+use App\Models\Comment;
 use phpDocumentor\Reflection\Types\Void_;
 
 class TaskControllerTest extends TestCase
@@ -17,7 +18,7 @@ class TaskControllerTest extends TestCase
 
     private const URI = 'api/task';
 
-    public function test_index_is_succesful(): void
+    public function test_index_is_successful(): void
     {
         $this->withoutExceptionHandling();
         $task = new Task();
@@ -26,16 +27,18 @@ class TaskControllerTest extends TestCase
         $task->setAttribute('status', 'completed');
         $task->save();
 
-        $task2 = new Task();
-        $task2->setAttribute('name', 'task2');
-        $task2->setAttribute('description', 'task-2');
-        $task2->setAttribute('status', 'not completed');
-        $task2->save();
+        $comment = new Comment();
+        $comment->setAttribute('title', 'title1');
+        $comment->setAttribute('body', 'body1');
+        $comment->task()->associate($task);
+        $comment->save();
 
         $response = $this->json('GET', self::URI);
-        $response->assertStatus(200)
-           ->assertJson([$task->toArray(), $task2->toArray()]);
-    }
+        $response->assertStatus(200);
+
+        $response->assertJson([$task->toArray()]);
+        $response->assertJson([$comment->toArray()]);
+    }      
 
     public function test_create_is_successful(): void
     {
@@ -55,19 +58,28 @@ class TaskControllerTest extends TestCase
                 'body' => 'comment body'
             ],
         ]);
+
         $expected = [
             'name' => 'test task',
             'description' => 'this is a test task',
             'status' => 'on progress',
-            'comment' => [
+            'comments' =>[ [
                 'title' => 'comment title',
                 'body' => 'comment body'
-            ],
+            ]],
         ];
 
         $response->assertStatus(201)
             ->assertJsonFragment($expected);
-        $this->assertDatabaseHas('tasks',$expected);
+        $this->assertDatabaseHas('tasks', [
+                    'name' => $expected['name'],
+                    'description' => $expected['description'],
+                    'status' => $expected['status']]
+                );
+        $this->assertDatabaseHas('comments', [
+            'title' => $expected['title'],
+            'body' => $expected['body']
+        ]);
     }
 
     public function testCreateFailsIfRequiredParamAreMissing(): void

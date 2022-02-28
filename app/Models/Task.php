@@ -19,4 +19,14 @@ class Task extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function toArray()
+    {
+        return [
+            'name' => $this->getAttribute('name'),
+            'description' => $this->getAttribute('description'),
+            'status' => $this->getAttribute('status'),
+            'comments' => $this->getRelationValue('comments')
+        ];
+    }
 }

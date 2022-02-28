@@ -18,4 +18,12 @@ class Comment extends Model
     {
         return $this->belongsTo(Task::class);
     }
+
+    public function toArray()
+    {
+        return [
+            'title' => $this->getAttribute('title'),
+            'body' => $this->getAttribute('body')
+        ];
+    }
 }

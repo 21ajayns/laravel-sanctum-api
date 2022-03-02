@@ -4,6 +4,7 @@ namespace Tests\Feature\Repositories;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Repositories\CommentRepository;
 use App\Repositories\TaskRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -30,10 +31,22 @@ class TaskRepositoryTest extends TestCase
             'status' => 'ongoing'
         ]);
 
+        $repository2 = new CommentRepository;
+
+        $result2 = $repository2->create([
+            'title' => 'new title',
+            'body' => 'new body'
+        ], $result);
+
         $this->assertDatabaseHas('tasks', [
             'name' => $result->getAttribute('name'),
             'description' => $result->getAttribute('description'),
             'status' => $result->getAttribute('status')
+        ]);
+
+        $this->assertDatabaseHas('comments', [
+            'title' => 'new title',
+            'body' => 'new body'
         ]);
     }
 

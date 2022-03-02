@@ -23,7 +23,7 @@ class TaskRepositoryTest extends TestCase
         $user->setAttribute('password', '2233');
         $user->save();
 
-        $repository = new TaskRepository;
+        $repository = new TaskRepository();
 
         $result = $repository->createTask([
             'name' => 'task',
@@ -31,18 +31,20 @@ class TaskRepositoryTest extends TestCase
             'status' => 'ongoing'
         ]);
 
-        $repository2 = new CommentRepository;
+        $repository2 = new CommentRepository();
 
         $result2 = $repository2->create([
             'title' => 'new title',
             'body' => 'new body'
         ], $result);
 
-        $this->assertDatabaseHas('tasks', [
-            'name' => $result->getAttribute('name'),
-            'description' => $result->getAttribute('description'),
-            'status' => $result->getAttribute('status')
-        ]);
+        $expected = [
+            'name' => 'task',
+            'description' => 'task one',
+            'status' => 'ongoing'
+        ];
+
+        $this->assertDatabaseHas('tasks', $expected);
 
         $this->assertDatabaseHas('comments', [
             'title' => 'new title',
@@ -58,7 +60,7 @@ class TaskRepositoryTest extends TestCase
         $user->setAttribute('password', '2233');
         $user->save();
 
-        $repository = new TaskRepository;
+        $repository = new TaskRepository();
 
         $task = new Task();
         $task->setAttribute('name', 'task1');
@@ -67,7 +69,6 @@ class TaskRepositoryTest extends TestCase
         $task->save();
 
         $result = $repository->getAllTasks();
-        //dd($result)
 
         $expected = [$task->toArray()];
         self::assertEquals($expected, $result->toArray());
@@ -81,7 +82,7 @@ class TaskRepositoryTest extends TestCase
         $user->setAttribute('password', '2233');
         $user->save();
 
-        $repository = new TaskRepository;
+        $repository = new TaskRepository();
 
         $task = new Task();
         $task->setAttribute('name', 'task1');
@@ -95,11 +96,13 @@ class TaskRepositoryTest extends TestCase
             'status' => 'ongoing'
             ],$task->getAttribute('id'));
 
-        $this->assertDatabaseHas('tasks', [
-            'name' => $result->getAttribute('name'),
-            'description' => $result->getAttribute('description'),
-            'status' => $result->getAttribute('status')
-            ]);
+        $expected = [
+            'name' => 'task1',
+            'description' => 'task one',
+            'status' => 'ongoing'
+        ];
+
+        $this->assertDatabaseHas('tasks', $expected);
     }
 
     public function test_find_task_is_successful(): void
@@ -110,7 +113,7 @@ class TaskRepositoryTest extends TestCase
         $user->setAttribute('password', '2233');
         $user->save();
 
-        $repository = new TaskRepository;
+        $repository = new TaskRepository();
 
         $task = new Task();
         $task->setAttribute('name', 'task1');
@@ -133,7 +136,7 @@ class TaskRepositoryTest extends TestCase
         $user->setAttribute('password', '2233');
         $user->save();
 
-        $repository = new TaskRepository;
+        $repository = new TaskRepository();
 
         $task = new Task();
         $task->setAttribute('name', 'task1');
@@ -142,11 +145,7 @@ class TaskRepositoryTest extends TestCase
         $task->save();
 
         $repository->destroy($task->getAttribute('id'));
-        //dd($task);
 
-        $this->assertDatabaseMissing('tasks', [$task->getAttribute('id')]);
-
+        $this->assertDatabaseMissing('tasks', ['id' => $task->getAttribute('id')]);
     }
-
 }
-

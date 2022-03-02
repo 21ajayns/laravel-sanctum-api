@@ -15,11 +15,13 @@ use Illuminate\Http\Response;
 class TaskController extends Controller
 {
     private CommentRepositoryInterface $commentRepository;
+    
     private TaskRepositoryInterface $taskRepository;
 
     public function __construct(CommentRepositoryInterface $commentRepository, TaskRepositoryInterface $taskRepository)
     {
         $this->commentRepository = $commentRepository;
+
         $this->taskRepository = $taskRepository;
     }
 

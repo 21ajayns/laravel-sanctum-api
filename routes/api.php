@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiHeaderController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
@@ -42,7 +43,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-
+//Api Header Check Route
+Route::get('/health-check', [ApiHeaderController::class, 'checkHealth'])->middleware('header');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

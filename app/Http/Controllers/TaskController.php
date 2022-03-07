@@ -5,25 +5,33 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskCreateRequest;
 use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
+use App\Repositories\Interfaces\CommentRepositoryInterface;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
 use App\Repositories\TaskRepository;
+use App\Repositories\CommentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
+    private CommentRepositoryInterface $commentRepository;
+    
     private TaskRepositoryInterface $taskRepository;
 
-    public function __construct(TaskRepositoryInterface $taskRepository)
+    public function __construct(CommentRepositoryInterface $commentRepository, TaskRepositoryInterface $taskRepository)
     {
+        $this->commentRepository = $commentRepository;
+
         $this->taskRepository = $taskRepository;
     }
+
     /**
      * Display a listing of the resource
      */
     public function index(): Response
     {
         $task = $this->taskRepository->getAllTasks();
+        
         return new Response($task);
     }
 
@@ -36,12 +44,16 @@ class TaskController extends Controller
     public function store(TaskCreateRequest $request): Response
     {
         $task = $this->taskRepository->createTask($request->all());
+        $comment = $request->get('comment');
+        
+        if (\is_array($comment) === true && empty($comment) === false) {
+            $this->commentRepository->create($comment, $task);
+        }
         return new Response($task->toArray(), 201);
     }
 
     /**
      * Display the specified resource.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

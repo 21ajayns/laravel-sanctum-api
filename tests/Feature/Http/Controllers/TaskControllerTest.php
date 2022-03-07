@@ -4,12 +4,10 @@ namespace tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
-use GuzzleHttp\Psr7\Uri;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
-use App\Http\Requests\TaskCreateRequest;
-use phpDocumentor\Reflection\Types\Void_;
+use App\Models\Comment;
 
 class TaskControllerTest extends TestCase
 {
@@ -17,7 +15,7 @@ class TaskControllerTest extends TestCase
 
     private const URI = 'api/task';
 
-    public function test_index_is_succesful(): void
+    public function test_index_is_successful(): void
     {
         $this->withoutExceptionHandling();
         $task = new Task();
@@ -26,16 +24,25 @@ class TaskControllerTest extends TestCase
         $task->setAttribute('status', 'completed');
         $task->save();
 
-        $task2 = new Task();
-        $task2->setAttribute('name', 'task2');
-        $task2->setAttribute('description', 'task-2');
-        $task2->setAttribute('status', 'not completed');
-        $task2->save();
+        $comment = new Comment();
+        $comment->setAttribute('title', 'title1');
+        $comment->setAttribute('body', 'body1');
+        $comment->task()->associate($task);
+        $comment->save();
+
+        $expected = [[
+            'name' => 'task1',
+            'description' => 'task-1',
+            'status' => 'completed',
+            'comments' => [
+                $comment->toArray()
+            ],
+        ]];
 
         $response = $this->json('GET', self::URI);
-        $response->assertStatus(200)
-           ->assertJson([$task->toArray(), $task2->toArray()]);
-    }
+        $response->assertStatus(200);
+        $response->assertJson($expected);
+    }      
 
     public function test_create_is_successful(): void
     {
@@ -49,16 +56,34 @@ class TaskControllerTest extends TestCase
         $response = $this->json('POST', self::URI, [
             'name' => 'test task',
             'description' => 'this is a test task',
-            'status' => 'on progress'
+            'status' => 'on progress',
+            'comment' => [
+                'title' => 'comment title',
+                'body' => 'comment body'
+            ],
         ]);
+
         $expected = [
             'name' => 'test task',
             'description' => 'this is a test task',
-            'status' => 'on progress'
+            'status' => 'on progress',
+            'comments' =>[ [
+                'title' => 'comment title',
+                'body' => 'comment body'
+            ]],
         ];
+
         $response->assertStatus(201)
-             ->assertJsonFragment($expected);
-        $this->assertDatabaseHas('tasks',$expected);
+            ->assertJsonFragment($expected);
+        $this->assertDatabaseHas('tasks', [
+                    'name' => $expected['name'],
+                    'description' => $expected['description'],
+                    'status' => $expected['status']]
+                );
+        $this->assertDatabaseHas('comments', [
+            'title' => 'comment title',
+            'body' => 'comment body']
+        );
     }
 
     public function testCreateFailsIfRequiredParamAreMissing(): void
@@ -99,11 +124,26 @@ class TaskControllerTest extends TestCase
         $task->setAttribute('status', 'completed');
         $task->save();
 
+        $comment = new Comment();
+        $comment->setAttribute('title', 'title1');
+        $comment->setAttribute('body', 'body1');
+        $comment->task()->associate($task);
+        $comment->save();
+
         $uri = \sprintf('%s/%s',self::URI,$task->getAttribute('id'));
+
+        $expected = [
+            'name' => 'task1',
+            'description' => 'task-1',
+            'status' => 'completed',
+            'comments' => [
+                $comment->toArray()
+            ]
+        ];
 
         $response = $this->json('GET', $uri);
         $response->assertStatus(200)
-          ->assertjson($task->toArray());
+          ->assertjson($expected);
     }
 
     public function test_update_is_successful(): void

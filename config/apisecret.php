@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'api-secret' => 'check-api-secret'
+    'api_secret' => 'check-api-secret'
 ];

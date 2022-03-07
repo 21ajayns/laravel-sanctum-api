@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ApiSecretException extends Exception
+class ApiSecretMissingException extends Exception
 {
     //
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\ApiSecretException;
+use App\Exceptions\ApiSecretMissingException;
 use Closure;
 use Exception;
 use Config;
@@ -20,22 +20,12 @@ class ApiHeaderCheckMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $value = config('apisecret.api-secret');
+        $value = config('apisecret.api_secret');
 
-        if ($request->hasHeader('api-secret'))
+        if ($request->hasHeader('api_secret') && $request->header('api_secret') === $value)
         {
-            if ($request->header('api-secret') === $value)
-            {
-                return $next($request);
-            }
-            else
-            {
-                throw new ApiSecretException("Invalid key");
-            }
+             return $next($request);
         }
-        else
-        {
-            throw new ApiSecretException("Invalid header");
-        } 
+        throw new ApiSecretMissingException("Missing api header credentials");
     }
 }

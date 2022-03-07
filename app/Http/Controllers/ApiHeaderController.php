@@ -9,7 +9,7 @@ class ApiHeaderController extends Controller
 {
     public function checkHealth(Request $request):Response 
     {
-        $Value = $request->header();
-        return new Response($Value);
+        $value = $request->header();
+        return new Response($value);
     }
 }

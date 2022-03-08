@@ -7,7 +7,6 @@ use Closure;
 use Exception;
 use Config;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config as FacadesConfig;
 
 class ApiHeaderCheckMiddleware
 {
@@ -22,7 +21,7 @@ class ApiHeaderCheckMiddleware
     {
         $value = config('apisecret.api_secret');
 
-        if ($request->hasHeader('api_secret') && $request->header('api_secret') === $value)
+        if ($request->hasHeader('api_secret') && ($request->header('api_secret') === $value))
         {
              return $next($request);
         }

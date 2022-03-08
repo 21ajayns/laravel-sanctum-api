@@ -24,36 +24,42 @@ class ApiHeaderControllerTest extends TestCase
         $response->assertJsonFragment($expected);
     }
 
-    public function test_header_without_value()
+    public function getDifferentInputCombinations(): iterable
     {
-        $this->expectException(ApiSecretMissingException::class);
-        $this->expectExceptionMessage('Missing api header credentials');
+        yield 'header without value' => [
+            'input' => [
+                'api_secret' => null
+            ],
+            'expected' => [
+                'message' => 'Missing api header credentials'
+            ]
+        ];
 
-        $value = ['api_secret' => null];
-        $response = $this->json('GET','api/health-check',[], $value);
+        yield 'header with wrong key' => [
+            'input' => [
+                'api_secret' => 'wrong key'
+            ],
+            'expected' => [
+                'message' => 'Missing api header credentials'
+            ]
+        ];
 
-        $response->assertStatus(422);
+        yield 'no header' => [
+            'input' => [],
+            'expected' => [
+                'message' => 'Missing api header credentials'
+            ]
+        ];
     }
 
-    public function test_header_with_wrong_key()
+    /**
+     * @dataProvider getDifferentInputCombinations
+     */
+    public function test_header_and_value(array $input, array $expected): void
     {
-        $this->expectException(ApiSecretMissingException::class);
-        $this->expectExceptionMessage('Missing api header credentials');
+        $response = $this->json('GET','api/health-check',[], $input);
 
-        $value = ['api_header' => 'wrong-key'];
-        $response = $this->json('GET', 'api/health-check',[], $value);
-
-        $response->assertStatus(422);
-    }
-
-    public function test_without_header()
-    {
-        $this->expectException(ApiSecretMissingException::class);
-        $this->expectExceptionMessage('Missing api header credentials');
-
-        $response = $this->json('GET', 'api/health-check',[], []);
-
-        $response->assertStatus(422);
-    }
-    
+        $response->assertStatus(422)
+             ->assertJson($expected);
+    } 
 }
